@@ -1,0 +1,16 @@
+{
+    http {
+        upstream apps {
+            {% for host in groups["aws_ec2"] %}
+            {% if hostvars[host].aws_ec2_az == aws_ec2_az and hostvars[host].aws_ec2_env == "app" %}
+            server {{ hostvars[host].inventory_hostname }};
+            {% endif %}
+            {% endfor %}
+        }
+    server {
+        listen 80;
+        location / {
+            proxy_pass http://apps;
+        }
+    }
+}

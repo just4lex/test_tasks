@@ -1,0 +1,30 @@
+---
+- name: Get subnet id info
+  amazon.aws.ec2_vpc_subnet_info:
+    subnet_ids: "{{ item.1.subnet }}"
+  register: subnet_info
+
+- name: Get AZ info
+  amazon.aws.aws_az_info:
+    filters:
+      zone-name: "{{ subnet_info.subnets[0].availability_zone }}"
+  register: az_info
+
+- name: Get AMI ID for image
+  amazon.aws.ec2_ami_info:
+    filters:
+      name: "{{ aws_ec2_image_name }}"
+    region: "{{ az_info.availability_zones[0].region_name }}"
+  register: image_info
+
+- name: Create EC2 instance
+  amazon.aws.ec2_instance:
+      name: "{{ item.0.name }}-{{item.1.seq_num}}"
+      key_name: "{{ ec2_sshkey.key.name }}"
+      vpc_subnet_id: "{{ item.1.subnet }}"
+      network:
+        assign_public_ip: "{{ item.1.assign_public_ip | default('false') }}"
+      image_id: "{{ image_info.images[0].image_id }}"
+      tags:
+        Environment: "{{ item.0.name }}"
+        AZ: "{{ subnet_info.subnets[0].availability_zone }}"

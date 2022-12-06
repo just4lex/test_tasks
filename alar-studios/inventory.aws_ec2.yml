@@ -1,0 +1,13 @@
+plugin: aws_ec2
+
+hostnames:
+  - tag:Name
+
+keyed_groups:
+  - prefix: az
+    key: placement.availability_zone
+
+compose:
+  ansible_host: private-ip-address
+  aws_ec2_az: tag:AZ
+  aws_ec2_env: tag:Environment

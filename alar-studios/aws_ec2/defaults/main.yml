@@ -1,0 +1,5 @@
+---
+instances: "{{ lookup('file', 'instances.yml') | from_yaml }}"
+ansible_ssh_private_key_file: "/tmp/id_ssh_rsa"
+aws_ec2_key_name: "my-project-ec2-key"
+aws_ec2_image_name: "needed-image-to-setup-ec2-instances"

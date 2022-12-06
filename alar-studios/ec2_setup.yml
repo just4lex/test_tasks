@@ -1,0 +1,6 @@
+- name: Setup nginx on instances
+  hosts: all
+  roles:
+    - nginx
+  tags: 
+    - nginx

@@ -1,0 +1,40 @@
+---
+- name: Check if required pip modules installed
+  pip:
+    name: "{{ item }}"
+  become: true
+  with_items:
+    - boto3>=1.18.0 
+    - botocore>=1.21.0
+
+# - name: Create local ssh keypair
+#   community.crypto.openssh_keypair:
+#     path: {{ ansible_ssh_private_key_file }}
+#   register: local_key
+
+# - name: Create key for instances
+#   amazon.aws.ec2_key:
+#     name: "{{ aws_ec2_key_name }}"
+#     key_material: "{{ local_key.public_key }}"
+#   register: ec2_sshkey
+
+
+- name: Output EC2 instances
+  debug:
+    msg: 
+      - "Brand new AWS EC2 Instance:"
+      - "name: {{ item.0.name }}-{{item.1.seq_num}}"
+      - "key_name: {{ aws_ec2_key_name }}"
+      - "vpc_subnet_id: {{ item.1.subnet }}"
+      - "instance_type: t2.micro \\\\ Default"
+      - "image_id: id of {{ aws_ec2_image_name }}"
+      - "network:"
+      - "  assign_public_ip: {{ item.1.assign_public_ip | default('false') }}"
+  loop: "{{ instances.instances | subelements('subnets') }}"
+  loop_control:
+    label: "{{ item.0.name }}-{{item.1.seq_num}}"
+# - name: Create EC2 instances
+#   include_tasks: ec2_create.yml
+#   loop: "{{ instances.instances | subelements('subnets') }}"
+#   loop_control:
+#     label: "{{ item.0.name }}-{{item.1.seq_num}}"

@@ -1,0 +1,8 @@
+---
+- name: Setup AWS EC2
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - aws_ec2
+  tags:
+    - aws_ec2_create
